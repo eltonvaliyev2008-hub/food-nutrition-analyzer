@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calorie Lens</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #d9c9a8;
+    --bg2:     #cbb990;
+    --card:    rgba(255,252,244,0.92);
+    --card2:   rgba(245,238,220,0.95);
+    --brown:   #2c1a0e;
+    --brown2:  #5c3d2e;
+    --brown3:  #8a6040;
+    --accent:  #8b3a0f;
+    --accent2: #c0541a;
+    --border:  rgba(44,26,14,0.12);
+    --border2: rgba(44,26,14,0.07);
+    --text:    #2c1a0e;
+    --muted:   #7a5c40;
+    --muted2:  #a07850;
+    --cal:     #c0541a;
+    --pro:     #2d6a4f;
+    --carb:    #b07d00;
+    --fat:     #7a4080;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    animation: bgColorCycle 18s ease-in-out infinite;
+  }
+  @keyframes bgColorCycle {
+    0%   { background-color: #d9c9a8; }
+    25%  { background-color: #f0e8d8; }
+    45%  { background-color: #faf8f3; }
+    65%  { background-color: #e8dcc8; }
+    80%  { background-color: #3a2510; }
+    90%  { background-color: #181008; }
+    100% { background-color: #d9c9a8; }
+  }
+
+  /* ── Sketch background ── */
+  .bg-sketch {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    animation: sketchScroll 40s linear infinite, sketchFade 18s ease-in-out infinite !important;
+    opacity: 0.13;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3C!-- Bread loaf --%3E%3Cellipse cx='38' cy='38' rx='28' ry='18' fill='none' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M10 38 Q38 15 66 38' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M20 38 Q38 50 56 38' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M28 34 Q35 28 42 34' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3C!-- Croissant --%3E%3Cpath d='M110 20 Q130 10 150 25 Q140 40 120 42 Q100 40 110 20Z' fill='none' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M112 22 Q130 14 148 26' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3Cpath d='M114 28 Q130 22 146 30' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3C!-- Pizza slice --%3E%3Cpath d='M200 10 L220 50 L180 50 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M183 47 Q200 44 217 47' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Ccircle cx='196' cy='32' r='3' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Ccircle cx='207' cy='38' r='2.5' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Ccircle cx='200' cy='42' r='2' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3C!-- Rolling pin --%3E%3Crect x='270' y='18' width='80' height='14' rx='7' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Crect x='258' y='20' width='14' height='10' rx='3' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Crect x='348' y='20' width='14' height='10' rx='3' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cline x1='280' y1='18' x2='280' y2='32' stroke='%232c1a0e' stroke-width='1'/%3E%3Cline x1='295' y1='18' x2='295' y2='32' stroke='%232c1a0e' stroke-width='1'/%3E%3Cline x1='310' y1='18' x2='310' y2='32' stroke='%232c1a0e' stroke-width='1'/%3E%3Cline x1='325' y1='18' x2='325' y2='32' stroke='%232c1a0e' stroke-width='1'/%3E%3Cline x1='340' y1='18' x2='340' y2='32' stroke='%232c1a0e' stroke-width='1'/%3E%3C!-- Whisk --%3E%3Cline x1='390' y1='10' x2='400' y2='55' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3Cellipse cx='395' cy='35' rx='10' ry='16' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M388 25 Q395 32 402 25' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3Cpath d='M387 35 Q395 42 403 35' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3C!-- Flour sack --%3E%3Cpath d='M25 100 Q15 110 18 130 Q20 150 40 155 Q60 158 65 138 Q68 118 58 105 Q48 95 35 98 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M28 103 Q40 95 52 105' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M25 125 Q40 118 58 125' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3Cpath d='M22 135 Q40 128 62 135' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3C!-- Baguette --%3E%3Cellipse cx='160' cy='120' rx='50' ry='12' fill='none' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M115 118 Q160 105 205 118' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3Cpath d='M125 116 L128 124' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M140 113 L143 121' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M155 112 L158 120' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M170 112 L173 120' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M185 114 L188 122' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3C!-- Wheat --%3E%3Cline x1='260' y1='160' x2='260' y2='90' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cellipse cx='252' cy='150' rx='8' ry='5' fill='none' stroke='%232c1a0e' stroke-width='1.5' transform='rotate(-30 252 150)'/%3E%3Cellipse cx='268' cy='150' rx='8' ry='5' fill='none' stroke='%232c1a0e' stroke-width='1.5' transform='rotate(30 268 150)'/%3E%3Cellipse cx='250' cy='135' rx='8' ry='5' fill='none' stroke='%232c1a0e' stroke-width='1.5' transform='rotate(-20 250 135)'/%3E%3Cellipse cx='270' cy='135' rx='8' ry='5' fill='none' stroke='%232c1a0e' stroke-width='1.5' transform='rotate(20 270 135)'/%3E%3Cellipse cx='252' cy='120' rx='7' ry='4' fill='none' stroke='%232c1a0e' stroke-width='1.5' transform='rotate(-15 252 120)'/%3E%3Cellipse cx='268' cy='120' rx='7' ry='4' fill='none' stroke='%232c1a0e' stroke-width='1.5' transform='rotate(15 268 120)'/%3E%3Cellipse cx='260' cy='105' rx='6' ry='4' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3C!-- Stand mixer --%3E%3Cellipse cx='360' cy='140' rx='28' ry='22' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Crect x='345' y='155' width='30' height='8' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cline x1='360' y1='162' x2='355' y2='175' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='360' y1='162' x2='365' y2='175' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M349 175 Q360 170 371 175' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Ccircle cx='360' cy='130' r='8' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cline x1='360' y1='118' x2='360' y2='110' stroke='%232c1a0e' stroke-width='1.5'/%3E%3C!-- Row 3 --%3E%3C!-- Bread slices --%3E%3Crect x='10' y='200' width='35' height='45' rx='4' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Crect x='15' y='205' width='25' height='35' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3Crect x='22' y='208' width='12' height='4' rx='2' fill='%232c1a0e' opacity='0.3'/%3E%3C!-- Donut --%3E%3Cellipse cx='110' cy='222' rx='26' ry='22' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cellipse cx='110' cy='222' rx='9' ry='7' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M88 215 Q110 205 132 215' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3C!-- Apple --%3E%3Cpath d='M195 215 Q180 215 178 230 Q176 248 190 255 Q197 258 200 255 Q203 258 210 255 Q224 248 222 230 Q220 215 205 215 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M200 215 Q202 205 210 200' fill='none' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M197 208 Q200 203 205 207' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3C!-- Carrot --%3E%3Cpath d='M280 195 Q292 210 285 240 Q283 248 280 250 Q277 248 275 240 Q268 210 280 195 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M276 200 Q278 210 276 225' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3Cpath d='M283 202 Q285 212 283 227' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3Cpath d='M272 195 Q280 185 285 180 Q280 188 290 183 Q282 192 290 190' fill='none' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3C!-- Pretzel --%3E%3Cpath d='M340 210 Q330 200 335 215 Q340 228 350 222 Q360 216 355 205 Q350 195 340 200 Q330 207 335 218 Q340 228 350 225 Q360 222 362 212' fill='none' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3C!-- Cake --%3E%3Crect x='378' y='225' width='42' height='28' rx='2' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cellipse cx='399' cy='225' rx='21' ry='8' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cline x1='390' y1='215' x2='390' y2='205' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='399' y1='213' x2='399' y2='203' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='408' y1='215' x2='408' y2='205' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M378 238 Q399 232 420 238' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3C!-- Row 4 --%3E%3C!-- Muffin --%3E%3Cpath d='M30 310 Q15 295 20 285 Q25 275 45 275 Q65 275 70 285 Q75 295 60 310 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M25 308 Q45 300 65 308' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3Cpath d='M22 280 Q45 270 68 280' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3C!-- Pie --%3E%3Cellipse cx='130' cy='310' rx='35' ry='15' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cellipse cx='130' cy='295' rx='35' ry='15' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cline x1='95' y1='295' x2='95' y2='310' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cline x1='165' y1='295' x2='165' y2='310' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M100 291 Q130 282 160 291' fill='none' stroke='%232c1a0e' stroke-width='1.2'/%3E%3C!-- Pasta bowl --%3E%3Cellipse cx='230' cy='305' rx='38' ry='16' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M192 305 Q200 325 230 328 Q260 325 268 305' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M205 303 Q215 295 225 303 Q230 308 240 300 Q248 295 255 303' fill='none' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M200 307 Q210 299 220 307 Q228 312 236 306 Q244 300 253 307' fill='none' stroke='%232c1a0e' stroke-width='1.2' stroke-linecap='round'/%3E%3C!-- Cupcake --%3E%3Cpath d='M295 285 Q280 285 278 300 Q280 315 295 318 Q310 315 312 300 Q310 285 295 285 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Crect x='285' y='315' width='20' height='15' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M285 316 Q295 310 305 316' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3Cline x1='295' y1='280' x2='295' y2='270' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='295' cy='267' r='3' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3C!-- Mixing bowl --%3E%3Cpath d='M348 280 Q332 280 330 295 Q330 315 348 320 Q366 315 370 295 Q368 280 352 280 Z' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Cpath d='M332 283 Q350 275 368 283' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M338 292 Q350 287 362 292' fill='none' stroke='%232c1a0e' stroke-width='1'/%3E%3C!-- Row 5 --%3E%3C!-- Sandwich --%3E%3Crect x='10' y='365' width='55' height='10' rx='5' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Crect x='12' y='355' width='51' height='10' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Crect x='12' y='345' width='51' height='10' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Crect x='10' y='338' width='55' height='8' rx='4' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3C!-- Hamburger --%3E%3Crect x='90' y='370' width='50' height='12' rx='6' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Crect x='92' y='360' width='46' height='10' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Crect x='92' y='350' width='46' height='10' rx='2' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Crect x='90' y='343' width='50' height='8' rx='4' fill='none' stroke='%232c1a0e' stroke-width='2'/%3E%3Ccircle cx='103' cy='355' r='2' fill='%232c1a0e' opacity='0.4'/%3E%3Ccircle cx='115' cy='353' r='1.5' fill='%232c1a0e' opacity='0.4'/%3E%3Ccircle cx='127' cy='355' r='2' fill='%232c1a0e' opacity='0.4'/%3E%3C!-- Spoon fork --%3E%3Cpath d='M190 340 Q188 355 190 380 Q192 395 190 405' fill='none' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='190' cy='345' r='8' fill='none' stroke='%232c1a0e' stroke-width='1.5'/%3E%3Cpath d='M207 340 L207 360 Q207 365 210 368 L210 405' fill='none' stroke='%232c1a0e' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M205 340 L205 355' fill='none' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M209 340 L209 355' fill='none' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3Cpath d='M213 340 L213 355' fill='none' stroke='%232c1a0e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 420px 420px;
+  }
+
+  /* Warm paper texture overlay */
+  .bg-texture {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 50% at 10% 30%, rgba(180,120,60,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 70% at 90% 80%, rgba(139,58,15,0.06) 0%, transparent 60%);
+  }
+
+  /* Layout */
+  .wrapper {
+    position: relative;
+    z-index: 2;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 0 28px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown .6s ease;
+  }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--brown);
+  }
+  .logo-hex {
+    width: 34px; height: 34px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+    animation: hexGlow 3s ease-in-out infinite;
+  }
+  @keyframes hexGlow {
+    0%,100%{filter:drop-shadow(0 0 0px rgba(139,58,15,0))}
+    50%{filter:drop-shadow(0 0 14px rgba(139,58,15,0.5))}
+  }
+  .logo span { color: var(--accent); }
+
+  /* Hero */
+  .hero { padding:80px 0 60px; animation:fadeUp .7s ease .1s both; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem,14vw,11rem);
+    line-height: .88;
+    letter-spacing: 6px;
+    margin-bottom: 50px;
+  }
+  .title-line1 { display:block; color:var(--brown); }
+  .title-line2 {
+    display: block;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(139,58,15,0.25), 0 0 80px rgba(139,58,15,0.1);
+    animation: glitch 5s ease-in-out infinite;
+  }
+  @keyframes glitch {
+    0%,90%,100%{text-shadow:0 0 40px rgba(139,58,15,0.25);transform:translateX(0)}
+    91%{text-shadow:-3px 0 rgba(0,150,100,0.4),3px 0 rgba(139,58,15,0.4);transform:translateX(-2px)}
+    93%{text-shadow:3px 0 rgba(0,150,100,0.4),-3px 0 rgba(139,58,15,0.4);transform:translateX(2px)}
+    95%{text-shadow:0 0 40px rgba(139,58,15,0.25);transform:translateX(0)}
+  }
+  .title-line3 { display:block; color:transparent; -webkit-text-stroke:1px rgba(44,26,14,0.2); letter-spacing:10px; }
+
+  /* Macro strip */
+  .macro-strip {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--card);
+    box-shadow: 0 4px 20px rgba(44,26,14,0.08);
+  }
+  .macro-item {
+    flex:1; padding:20px 16px;
+    border-right:1px solid var(--border);
+    position:relative; overflow:hidden;
+    transition: background .3s;
+  }
+  .macro-item:last-child { border-right:none; }
+  .macro-item:hover { background: rgba(139,58,15,0.04); }
+  .macro-item::before {
+    content:''; position:absolute; bottom:0;left:0;right:0; height:2px;
+    background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .4s;
+  }
+  .macro-item:hover::before { transform:scaleX(1); }
+  .macro-label { font-size:.6rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .macro-value { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; line-height:1; }
+  .macro-value.cal{color:var(--cal)} .macro-value.pro{color:var(--pro)} .macro-value.carb{color:var(--carb)} .macro-value.fat{color:var(--fat)}
+  .macro-unit { font-size:.7rem; opacity:.5; margin-left:2px; font-family:'Rajdhani',sans-serif; font-weight:500; }
+  .macro-bar { height:3px; background:var(--border); border-radius:2px; margin-top:10px; overflow:hidden; }
+  .macro-bar-fill { height:100%; border-radius:2px; animation:barLoad 1.5s ease forwards; }
+  @keyframes barLoad { from{width:0} }
+  .bar-cal{background:var(--cal);width:72%} .bar-pro{background:var(--pro);width:45%} .bar-carb{background:var(--carb);width:85%} .bar-fat{background:var(--fat);width:38%}
+
+  /* Divider */
+  .divider { display:flex; align-items:center; gap:16px; margin:60px 0 40px; }
+  .divider-line { flex:1; height:1px; background:var(--border); }
+  .divider-label { font-size:.65rem; font-weight:700; letter-spacing:4px; text-transform:uppercase; color:var(--accent); }
+
+  /* Card */
+  .upload-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    animation: fadeUp .7s ease .2s both;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(44,26,14,0.1);
+  }
+  .upload-card::before {
+    content:''; position:absolute; top:0;left:0;right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  }
+  .card-header {
+    padding:20px 30px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--card2);
+  }
+  .card-title { font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:5px; color:var(--muted2); }
+  .card-step { font-size:.65rem; font-weight:700; letter-spacing:2px; color:var(--accent); }
+  .card-body { padding:30px; }
+
+  /* Upload zone */
+  .upload-zone {
+    border:1.5px dashed rgba(139,58,15,.3);
+    border-radius:8px; padding:50px 20px; text-align:center;
+    cursor:pointer; transition:all .3s; position:relative;
+    background:rgba(139,58,15,.03); margin-bottom:24px;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color:var(--accent); background:rgba(139,58,15,.06);
+    transform:translateY(-2px); box-shadow:0 8px 28px rgba(139,58,15,.1);
+  }
+  .upload-zone input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+  .upload-icon {
+    width:56px; height:56px; border:1.5px solid rgba(139,58,15,.3); border-radius:6px;
+    margin:0 auto 16px; display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem; color:var(--accent); transition:all .3s;
+  }
+  .upload-zone:hover .upload-icon { border-color:var(--accent); box-shadow:0 0 20px rgba(139,58,15,.2); transform:scale(1.05); }
+  .upload-title { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:4px; margin-bottom:8px; color:var(--brown); }
+  .upload-sub { font-size:.8rem; color:var(--muted); letter-spacing:1px; }
+  .upload-sub span { color:var(--accent); font-weight:600; }
+  #file-name { font-size:.75rem; color:var(--accent); letter-spacing:1px; margin-top:10px; min-height:18px; font-weight:600; }
+  #preview-img { max-width:100%; max-height:160px; border-radius:8px; margin-top:14px; display:none; object-fit:cover; width:100%; box-shadow:0 4px 16px rgba(44,26,14,.15); }
+
+  /* Weight */
+  .weight-section { margin-bottom:24px; }
+  .weight-section > label { font-size:.65rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:12px; }
+  .custom-select { position:relative; user-select:none; }
+  .select-selected {
+    background:rgba(139,58,15,.04); border:1px solid var(--border); border-radius:6px;
+    padding:16px 44px 16px 20px; font-family:'Rajdhani',sans-serif; font-size:1.1rem; font-weight:600;
+    color:var(--brown); cursor:pointer; transition:all .3s; display:flex; align-items:center; justify-content:space-between;
+  }
+  .select-selected::after { content:''; display:block; width:10px; height:6px; background:var(--accent); clip-path:polygon(0 0,100% 0,50% 100%); transition:transform .3s; flex-shrink:0; }
+  .select-selected.open { border-color:rgba(139,58,15,.3); background:rgba(139,58,15,.06); }
+  .select-selected.open::after { transform:rotate(180deg); }
+  .select-items {
+    position:absolute; top:calc(100% + 4px); left:0; right:0;
+    background:rgba(245,238,220,0.98); border:1px solid rgba(139,58,15,.2); border-radius:6px;
+    z-index:100; max-height:260px; overflow-y:auto; display:none;
+    box-shadow:0 8px 32px rgba(44,26,14,.12);
+  }
+  .select-items.open { display:block; animation:dropDown .2s ease; }
+  @keyframes dropDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  .select-item { padding:14px 20px; font-family:'Rajdhani',sans-serif; font-size:1rem; font-weight:600; color:var(--muted2); cursor:pointer; transition:all .15s; border-bottom:1px solid var(--border2); letter-spacing:1px; }
+  .select-item:last-child { border-bottom:none; }
+  .select-item:hover { background:rgba(139,58,15,.08); color:var(--brown); padding-left:26px; }
+  .select-item.selected { color:var(--accent); background:rgba(139,58,15,.06); }
+  .real-select { display:none; }
+
+  /* Submit */
+  .submit-btn {
+    width:100%; padding:20px; background:transparent; border:1.5px solid var(--accent);
+    color:var(--accent); font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:6px;
+    cursor:pointer; transition:all .3s; position:relative; overflow:hidden; border-radius:4px;
+    clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  }
+  .submit-btn::before { content:''; position:absolute; inset:0; background:var(--accent); transform:scaleX(0); transform-origin:left; transition:transform .3s; }
+  .submit-btn:hover { color:white; box-shadow:0 0 30px rgba(139,58,15,.25); }
+  .submit-btn:hover::before { transform:scaleX(1); }
+  .submit-btn span { position:relative; z-index:1; }
+  .submit-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+  /* Loading */
+  .loading-overlay {
+    display:none; position:fixed; inset:0; z-index:100;
+    background:rgba(217,201,168,.88); backdrop-filter:blur(10px);
+    flex-direction:column; align-items:center; justify-content:center; gap:20px;
+  }
+  .loading-overlay.show { display:flex; animation:fadeUp .3s ease; }
+  .spinner {
+    width:60px; height:60px; border-radius:50%;
+    border:3px solid rgba(139,58,15,.2); border-top-color:var(--accent);
+    animation:spin .85s linear infinite;
+  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .loading-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:4px; color:var(--brown); }
+  .loading-sub { font-size:.82rem; color:var(--muted2); letter-spacing:1px; }
+
+  /* Error */
+  .error-box { background:rgba(192,0,26,.06); border:1px solid rgba(192,0,26,.2); border-radius:6px; padding:14px 18px; margin-bottom:18px; font-size:.85rem; color:#c0001a; display:flex; align-items:center; gap:10px; }
+
+  /* Result */
+  .result-section { animation:fadeUp .5s ease; }
+  .result-hero {
+    background:linear-gradient(135deg,var(--brown) 0%,var(--brown2) 100%);
+    padding:36px 30px; position:relative; overflow:hidden; border-radius:8px 8px 0 0;
+  }
+  .result-hero::before { content:''; position:absolute; right:-40px;top:-40px; width:200px;height:200px; border:1px solid rgba(255,255,255,.1); border-radius:50%; }
+  .result-hero::after { content:''; position:absolute; right:-10px;top:-10px; width:120px;height:120px; border:1px solid rgba(255,255,255,.1); border-radius:50%; }
+  .result-tag { font-size:.65rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;opacity:.7;margin-bottom:12px;color:white;display:flex;align-items:center;gap:8px; }
+  .result-tag::before { content:'';width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+  .result-food-name { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,5vw,3.5rem); letter-spacing:4px;line-height:1;margin-bottom:8px;color:white;text-transform:capitalize; }
+  .result-portion { font-size:.85rem;font-weight:500;opacity:.7;letter-spacing:2px;color:white; }
+
+  /* Top 3 */
+  .top3-section { background:var(--card2); border:1px solid var(--border); border-top:none; padding:20px 30px; }
+  .top3-heading { font-size:.63rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px; }
+  .top3-row { display:flex;align-items:center;gap:12px;margin-bottom:10px; }
+  .top3-rank { width:22px;height:22px;border-radius:5px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--muted2);flex-shrink:0; }
+  .top3-rank.gold { background:rgba(176,125,0,.1);border-color:rgba(176,125,0,.3);color:var(--carb); }
+  .top3-name { flex:1;font-size:.85rem;font-weight:600;color:var(--brown); }
+  .top3-track { width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden; }
+  .top3-fill { height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));animation:fillIn .9s ease forwards; }
+  @keyframes fillIn { from{width:0} }
+  .top3-pct { font-size:.75rem;font-weight:700;color:var(--accent);min-width:38px;text-align:right; }
+
+  /* Primary stats */
+  .primary-stats { display:grid;grid-template-columns:repeat(4,1fr); background:var(--card); border:1px solid var(--border); border-top:none; box-shadow:0 4px 16px rgba(44,26,14,.06); }
+  @media(max-width:600px){.primary-stats{grid-template-columns:repeat(2,1fr)}}
+  .p-stat { padding:24px 16px;text-align:center;border-right:1px solid var(--border);transition:background .2s; }
+  .p-stat:hover { background:rgba(139,58,15,.03); }
+  .p-stat:last-child { border-right:none; }
+  .p-stat-val { font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:2px;line-height:1;margin-bottom:8px; }
+  .pv-cal{color:var(--cal)} .pv-pro{color:var(--pro)} .pv-carb{color:var(--carb)} .pv-fat{color:var(--fat)}
+  .p-stat-unit { font-size:.72rem;opacity:.6;margin-left:2px; }
+  .p-stat-label { font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted); }
+
+  /* Secondary */
+  .secondary-stats { display:grid;grid-template-columns:repeat(3,1fr); background:var(--card); border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;overflow:hidden; box-shadow:0 4px 16px rgba(44,26,14,.06); }
+  @media(max-width:600px){.secondary-stats{grid-template-columns:repeat(2,1fr)}}
+  .s-stat { padding:18px 22px;border-right:1px solid var(--border);border-top:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:background .2s; }
+  .s-stat:hover { background:rgba(139,58,15,.02); }
+  .s-stat:nth-child(3n){border-right:none}
+  .s-stat-bar { width:3px;height:32px;background:var(--accent);opacity:.3;border-radius:2px;flex-shrink:0; }
+  .s-stat-label { font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px; }
+  .s-stat-val { font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:var(--brown);line-height:1; }
+
+  /* Calorie tip */
+  .calorie-tip { background:rgba(176,125,0,.06);border:1px solid rgba(176,125,0,.15);border-radius:8px;padding:14px 18px;margin-top:14px;display:flex;align-items:flex-start;gap:12px;font-size:.8rem;color:var(--brown2);line-height:1.6; }
+  .calorie-tip-icon { font-size:1.1rem;flex-shrink:0; }
+  .calorie-tip strong { color:var(--accent); }
+
+  /* ── Extra animations ── */
+
+  /* Background sketch scroll + fade */
+  @keyframes sketchScroll {
+    0%   { background-position: 0px 0px; }
+    100% { background-position: 420px 420px; }
+  }
+  @keyframes sketchFade {
+    0%   { opacity: 0.13; }
+    25%  { opacity: 0.18; }
+    45%  { opacity: 0.22; }
+    65%  { opacity: 0.16; }
+    80%  { opacity: 0.35; }
+    90%  { opacity: 0.45; }
+    100% { opacity: 0.13; }
+  }
+
+  /* Logo float */
+  .logo {
+    animation: logoFloat 4s ease-in-out infinite;
+  }
+  @keyframes logoFloat {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-4px); }
+  }
+
+  /* Hero title lines stagger */
+  .title-line1 { animation: slideInLeft .8s ease .1s both, textGlow1 6s ease-in-out 1s infinite; }
+  .title-line2 { animation: slideInLeft .8s ease .25s both; }
+  .title-line3 { animation: slideInLeft .8s ease .4s both, strokePulse 4s ease-in-out 1s infinite; }
+  @keyframes slideInLeft {
+    from { opacity:0; transform: translateX(-40px); }
+    to   { opacity:1; transform: translateX(0); }
+  }
+
+  /* Macro strip items stagger */
+  .macro-item:nth-child(1) { animation: macroIn .6s ease .5s both; }
+  .macro-item:nth-child(2) { animation: macroIn .6s ease .65s both; }
+  .macro-item:nth-child(3) { animation: macroIn .6s ease .8s both; }
+  .macro-item:nth-child(4) { animation: macroIn .6s ease .95s both; }
+  @keyframes macroIn {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* Divider lines grow */
+  .divider-line {
+    transform-origin: center;
+    animation: lineGrow 1s ease both;
+  }
+  @keyframes lineGrow {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 1; }
+  }
+  .divider-label { animation: fadeUp .6s ease .3s both; }
+
+  /* Upload card entrance */
+  .upload-card { animation: cardSlideUp .8s cubic-bezier(.16,1,.3,1) .3s both; }
+  @keyframes cardSlideUp {
+    from { opacity:0; transform: translateY(40px) scale(0.97); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  /* Upload icon bounce */
+  .upload-icon {
+    animation: iconBounce 3s ease-in-out infinite;
+  }
+  @keyframes iconBounce {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    30%     { transform: translateY(-6px) rotate(-5deg); }
+    60%     { transform: translateY(-3px) rotate(3deg); }
+  }
+  .upload-zone:hover .upload-icon {
+    animation: iconShake .4s ease;
+  }
+  @keyframes iconShake {
+    0%,100%{ transform:rotate(0deg) scale(1.05); }
+    25%    { transform:rotate(-8deg) scale(1.08); }
+    75%    { transform:rotate(8deg) scale(1.08); }
+  }
+
+  /* Submit button pulse */
+  .submit-btn {
+    animation: btnPulse 3s ease-in-out infinite;
+  }
+  @keyframes btnPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(139,58,15,0); }
+    50%     { box-shadow: 0 0 0 6px rgba(139,58,15,0.08); }
+  }
+
+  /* Result hero slide in */
+  .result-hero { animation: resultIn .7s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes resultIn {
+    from { opacity:0; transform: translateY(30px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* p-stat numbers count-in */
+  .p-stat { animation: statPop .5s ease both; }
+  .p-stat:nth-child(1){ animation-delay:.1s; }
+  .p-stat:nth-child(2){ animation-delay:.2s; }
+  .p-stat:nth-child(3){ animation-delay:.3s; }
+  .p-stat:nth-child(4){ animation-delay:.4s; }
+  @keyframes statPop {
+    from { opacity:0; transform:scale(.85) translateY(10px); }
+    to   { opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  /* s-stat slide in */
+  .s-stat:nth-child(1){ animation: sStatIn .5s ease .5s both; }
+  .s-stat:nth-child(2){ animation: sStatIn .5s ease .6s both; }
+  .s-stat:nth-child(3){ animation: sStatIn .5s ease .7s both; }
+  @keyframes sStatIn {
+    from { opacity:0; transform:translateX(-20px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+
+  /* p-stat-val shimmer on hover */
+  .p-stat:hover .p-stat-val {
+    animation: shimmer .4s ease;
+  }
+  @keyframes shimmer {
+    0%,100%{ transform:scale(1); }
+    50%    { transform:scale(1.06); }
+  }
+
+  /* Top3 rows stagger */
+  .top3-row:nth-child(2){ animation: top3In .5s ease .1s both; }
+  .top3-row:nth-child(3){ animation: top3In .5s ease .2s both; }
+  .top3-row:nth-child(4){ animation: top3In .5s ease .3s both; }
+  @keyframes top3In {
+    from { opacity:0; transform:translateX(20px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+
+  /* Calorie tip slide */
+  .calorie-tip { animation: fadeUp .6s ease .8s both; }
+
+  /* Spinner ring dual */
+  .spinner {
+    border-right-color: rgba(139,58,15,0.1);
+    border-bottom-color: rgba(139,58,15,0.2);
+  }
+
+  /* Footer fade */
+  footer { animation: fadeUp .6s ease 1s both; }
+
+  /* Footer */
+  footer { margin-top:80px;padding-top:28px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+  .footer-logo { font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:4px;color:var(--muted); }
+  .footer-logo span { color:var(--accent); }
+  .footer-tagline { font-size:.65rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted); }
+
+  @keyframes textGlow1 {
+    0%,100% { text-shadow: none; opacity:1; }
+    50% { text-shadow: 2px 2px 0 rgba(139,58,15,0.15), -1px -1px 0 rgba(139,58,15,0.08); }
+  }
+  @keyframes strokePulse {
+    0%,100% { -webkit-text-stroke: 1px rgba(44,26,14,0.2); letter-spacing:10px; }
+    50%     { -webkit-text-stroke: 1px rgba(139,58,15,0.45); letter-spacing:13px; }
+  }
+
+  /* Card border glow pulse */
+  .upload-card {
+    animation: cardSlideUp .8s cubic-bezier(.16,1,.3,1) .3s both, cardGlow 5s ease-in-out 1s infinite !important;
+  }
+  @keyframes cardGlow {
+    0%,100% { box-shadow: 0 8px 32px rgba(44,26,14,0.10); }
+    50%     { box-shadow: 0 12px 48px rgba(139,58,15,0.20), 0 0 0 1px rgba(139,58,15,0.08); }
+  }
+
+  /* Logo hex spin */
+  .logo-hex {
+    animation: hexGlow 3s ease-in-out infinite, hexSpin 8s linear infinite !important;
+  }
+  @keyframes hexSpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Divider label flicker */
+  .divider-label {
+    animation: fadeUp .6s ease .3s both, labelFlicker 6s ease-in-out 2s infinite !important;
+  }
+  @keyframes labelFlicker {
+    0%,90%,100% { opacity:1; letter-spacing:4px; }
+    92%  { opacity:.5; letter-spacing:5px; }
+    95%  { opacity:1; letter-spacing:3px; }
+    97%  { opacity:.7; letter-spacing:5px; }
+  }
+
+  /* Macro values breathe */
+  .macro-value {
+    animation: macroBreath 4s ease-in-out infinite;
+  }
+  @keyframes macroBreath {
+    0%,100% { transform: scale(1); }
+    50%     { transform: scale(1.04); }
+  }
+
+  /* Upload zone border march */
+  .upload-zone {
+    animation: borderMarch 3s linear infinite !important;
+    background-clip: padding-box;
+  }
+  @keyframes borderMarch {
+    0%   { border-color: rgba(139,58,15,.3); }
+    25%  { border-color: rgba(139,58,15,.6); }
+    50%  { border-color: rgba(192,84,26,.8); }
+    75%  { border-color: rgba(139,58,15,.6); }
+    100% { border-color: rgba(139,58,15,.3); }
+  }
+
+  /* Submit btn shimmer sweep */
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%; width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: sweep 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes sweep {
+    0%   { left: -100%; }
+    50%  { left: 150%; }
+    100% { left: 150%; }
+  }
+
+  /* Result food name typewriter wobble */
+  .result-food-name {
+    animation: resultIn .7s cubic-bezier(.16,1,.3,1) both, nameWobble 6s ease-in-out 1s infinite !important;
+  }
+  @keyframes nameWobble {
+    0%,100% { letter-spacing:4px; }
+    50%     { letter-spacing:6px; }
+  }
+
+  /* Result tag dot orbit */
+  .result-tag::before {
+    animation: blink 2s infinite, dotOrbit 3s linear infinite !important;
+  }
+  @keyframes dotOrbit {
+    0%   { transform: scale(1) translateY(0); }
+    25%  { transform: scale(1.4) translateY(-2px); }
+    50%  { transform: scale(1) translateY(0); }
+    75%  { transform: scale(.7) translateY(2px); }
+    100% { transform: scale(1) translateY(0); }
+  }
+
+  /* p-stat-val number wobble on appear */
+  .p-stat-val {
+    display: inline-block;
+    animation: numBounce .6s cubic-bezier(.36,2,.5,1) both;
+  }
+  .p-stat:nth-child(1) .p-stat-val { animation-delay:.15s; }
+  .p-stat:nth-child(2) .p-stat-val { animation-delay:.25s; }
+  .p-stat:nth-child(3) .p-stat-val { animation-delay:.35s; }
+  .p-stat:nth-child(4) .p-stat-val { animation-delay:.45s; }
+  @keyframes numBounce {
+    0%   { transform:scale(0) rotate(-8deg); opacity:0; }
+    60%  { transform:scale(1.15) rotate(3deg); opacity:1; }
+    100% { transform:scale(1) rotate(0); opacity:1; }
+  }
+
+  /* s-stat bar pulse */
+  .s-stat-bar {
+    animation: barPulse 2.5s ease-in-out infinite;
+  }
+  .s-stat:nth-child(1) .s-stat-bar { animation-delay:0s; }
+  .s-stat:nth-child(2) .s-stat-bar { animation-delay:.4s; }
+  .s-stat:nth-child(3) .s-stat-bar { animation-delay:.8s; }
+  @keyframes barPulse {
+    0%,100% { opacity:.3; transform:scaleY(1); }
+    50%     { opacity:.9; transform:scaleY(1.25); }
+  }
+
+  /* Macro bar fill wave */
+  .macro-bar-fill {
+    animation: barLoad 1.5s ease forwards, barWave 3s ease-in-out 1.5s infinite !important;
+  }
+  @keyframes barWave {
+    0%,100% { opacity:1; }
+    50%     { opacity:.6; }
+  }
+
+  /* Card header shimmer */
+  .card-header {
+    position: relative; overflow: hidden;
+  }
+  .card-header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -120%; width: 80%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139,58,15,0.05), transparent);
+    animation: headerSweep 5s ease-in-out infinite;
+  }
+  @keyframes headerSweep {
+    0%   { left:-120%; }
+    60%  { left: 200%; }
+    100% { left: 200%; }
+  }
+
+  /* Footer logo letter spacing breathe */
+  .footer-logo {
+    animation: footerBreathe 5s ease-in-out infinite;
+  }
+  @keyframes footerBreathe {
+    0%,100% { letter-spacing:4px; opacity:.7; }
+    50%     { letter-spacing:6px; opacity:1; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loading-title">Scanning Food...</div>
+  <div class="loading-sub">AI is analyzing your image</div>
+</div>
+
+<div class="bg-sketch"></div>
+<div class="bg-texture"></div>
+
+<div class="wrapper">
+
+  <header>
+    <div class="logo">
+      <div class="logo-hex"></div>
+      CALORIE<span>LENS</span>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-title">
+      <span class="title-line1">IDENTIFY</span>
+      <span class="title-line2">SCAN</span>
+      <span class="title-line3">YOUR FOOD</span>
+    </div>
+
+    <div class="macro-strip">
+      <div class="macro-item">
+        <div class="macro-label">Calories</div>
+        <div class="macro-value cal" id="calVal">—<span class="macro-unit">kcal</span></div>
+        <div class="macro-bar"><div class="macro-bar-fill bar-cal"></div></div>
+      </div>
+      <div class="macro-item">
+        <div class="macro-label">Protein</div>
+        <div class="macro-value pro" id="proVal">—<span class="macro-unit">g</span></div>
+        <div class="macro-bar"><div class="macro-bar-fill bar-pro"></div></div>
+      </div>
+      <div class="macro-item">
+        <div class="macro-label">Carbs</div>
+        <div class="macro-value carb" id="carbVal">—<span class="macro-unit">g</span></div>
+        <div class="macro-bar"><div class="macro-bar-fill bar-carb"></div></div>
+      </div>
+      <div class="macro-item">
+        <div class="macro-label">Fat</div>
+        <div class="macro-value fat" id="fatVal">—<span class="macro-unit">g</span></div>
+        <div class="macro-bar"><div class="macro-bar-fill bar-fat"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">Analysis Panel</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Upload card -->
+  <div class="upload-card">
+    <div class="card-header">
+      <div class="card-title">Upload Image</div>
+      <div class="card-step">Step 01 / 01</div>
+    </div>
+    <div class="card-body">
+
+      {% if error %}
+      <div class="error-box">⚠️ {{ error }}</div>
+      {% endif %}
+
+      <form action="/predict" method="post" enctype="multipart/form-data" id="uploadForm">
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" name="file" accept="image/*" required id="fileInput" onchange="handleFile(this)"/>
+          <div class="upload-icon">📷</div>
+          <div class="upload-title">Drop Image Here</div>
+          <div class="upload-sub">or <span onclick="document.getElementById('fileInput').click()">browse files</span> · JPG · PNG · JPEG</div>
+          <div id="file-name"></div>
+          <img id="preview-img" src="" alt="preview"/>
+        </div>
+
+        <div class="weight-section">
+          <label>Portion Size</label>
+          <div class="custom-select" id="customSelect">
+            <div class="select-selected" id="selectSelected">100 gram</div>
+            <div class="select-items" id="selectItems">
+              {% for w in weights %}
+              <div class="select-item {% if w == 100 %}selected{% endif %}" data-value="{{ w }}">{{ w }} gram</div>
+              {% endfor %}
+            </div>
+          </div>
+          <select name="weight" class="real-select" id="realSelect">
+            {% for w in weights %}
+            <option value="{{ w }}" {% if w == 100 %}selected{% endif %}>{{ w }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>Analyze Food</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Result -->
+  {% if class_name %}
+  <div class="result-section">
+    <div class="divider" style="margin-top:40px;">
+      <div class="divider-line"></div>
+      <div class="divider-label">Analysis Result</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="result-hero">
+      <div class="result-tag">AI Identified</div>
+      <div class="result-food-name">{{ class_name.replace('_', ' ') }}</div>
+      <div class="result-portion">{{ weight }} gram portion</div>
+    </div>
+
+    {% if top3 %}
+    <div class="top3-section">
+      <div class="top3-heading">Top Predictions</div>
+      {% for item in top3 %}
+      <div class="top3-row">
+        <div class="top3-rank {% if loop.first %}gold{% endif %}">{{ loop.index }}</div>
+        <div class="top3-name">{{ item.name }}</div>
+        <div class="top3-track"><div class="top3-fill" style="width:{{ item.prob }}%"></div></div>
+        <div class="top3-pct">{{ item.prob }}%</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="primary-stats">
+      <div class="p-stat"><div class="p-stat-val pv-cal">{{ kalori }}<span class="p-stat-unit">kcal</span></div><div class="p-stat-label">Calories</div></div>
+      <div class="p-stat"><div class="p-stat-val pv-pro">{{ protein }}<span class="p-stat-unit">g</span></div><div class="p-stat-label">Protein</div></div>
+      <div class="p-stat"><div class="p-stat-val pv-carb">{{ karbohid }}<span class="p-stat-unit">g</span></div><div class="p-stat-label">Carbs</div></div>
+      <div class="p-stat"><div class="p-stat-val pv-fat">{{ yag }}<span class="p-stat-unit">g</span></div><div class="p-stat-label">Fat</div></div>
+    </div>
+
+    <div class="secondary-stats">
+      <div class="s-stat"><div class="s-stat-bar"></div><div><div class="s-stat-label">Fiber</div><div class="s-stat-val">{{ lif }}g</div></div></div>
+      <div class="s-stat"><div class="s-stat-bar"></div><div><div class="s-stat-label">Sugar</div><div class="s-stat-val">{{ seker }}g</div></div></div>
+      <div class="s-stat"><div class="s-stat-bar"></div><div><div class="s-stat-label">Sodium</div><div class="s-stat-val">{{ natrium }}mg</div></div></div>
+    </div>
+
+    {% if kalori != "N/A" %}
+    <div class="calorie-tip">
+      <div class="calorie-tip-icon">💡</div>
+      <div><strong>{{ class_name.replace('_',' ').title() }} ({{ weight }}g) ≈ {{ kalori }} kcal</strong> — That's approximately <strong>{{ ((kalori / 2000) * 100) | round(1) }}%</strong> of a typical 2,000 kcal daily diet.</div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <footer>
+    <div class="footer-logo">CALORIE<span>LENS</span></div>
+    <div class="footer-tagline">AI Powered Food Analysis</div>
+  </footer>
+
+</div>
+
+<script>
+  // Demo counter
+  const foods = [
+    {cal:266,pro:11,carb:33,fat:10},
+    {cal:450,pro:25,carb:40,fat:18},
+    {cal:180,pro:5,carb:28,fat:6},
+    {cal:320,pro:18,carb:22,fat:15},
+    {cal:95,pro:2,carb:20,fat:1},
+  ];
+  let idx = 0;
+  function countUp(el, target) {
+    let n = 0; const step = Math.ceil(target/30);
+    const t = setInterval(() => {
+      n += step; if(n >= target){n=target;clearInterval(t);}
+      el.childNodes[0].textContent = n;
+    }, 30);
+  }
+  function showFood(f) {
+    countUp(document.getElementById('calVal'),f.cal);
+    countUp(document.getElementById('proVal'),f.pro);
+    countUp(document.getElementById('carbVal'),f.carb);
+    countUp(document.getElementById('fatVal'),f.fat);
+  }
+  setTimeout(() => {
+    showFood(foods[0]);
+    setInterval(() => { idx=(idx+1)%foods.length; showFood(foods[idx]); }, 3000);
+  }, 800);
+
+  // File preview
+  function handleFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    document.getElementById('file-name').textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = document.getElementById('preview-img');
+      img.src = e.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Dropdown
+  const sel = document.getElementById('selectSelected');
+  const items = document.getElementById('selectItems');
+  const realSel = document.getElementById('realSelect');
+  const allItems = document.querySelectorAll('.select-item');
+  sel.addEventListener('click', () => { sel.classList.toggle('open'); items.classList.toggle('open'); });
+  allItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const val = item.getAttribute('data-value');
+      sel.childNodes[0].textContent = val + ' gram';
+      sel.classList.remove('open'); items.classList.remove('open');
+      allItems.forEach(i => i.classList.remove('selected'));
+      item.classList.add('selected');
+      realSel.value = val;
+    });
+  });
+  document.addEventListener('click', e => {
+    if (!document.getElementById('customSelect').contains(e.target)) {
+      sel.classList.remove('open'); items.classList.remove('open');
+    }
+  });
+
+  // Drag & drop
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer(); dt.items.add(file);
+      document.getElementById('fileInput').files = dt.files;
+      handleFile(document.getElementById('fileInput'));
+    }
+  });
+
+  // Loading
+  document.getElementById('uploadForm').addEventListener('submit', () => {
+    if (document.getElementById('fileInput').files.length) {
+      document.getElementById('loader').classList.add('show');
+      document.getElementById('submitBtn').disabled = true;
+    }
+  });
+</script>
+</body>
+</html>
